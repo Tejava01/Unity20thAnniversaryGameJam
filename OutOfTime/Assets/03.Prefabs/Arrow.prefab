@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 21353252197099677}
-  speed: 6
+  speed: 5
   damage: 10
   affinity: 1
   knockback: 3

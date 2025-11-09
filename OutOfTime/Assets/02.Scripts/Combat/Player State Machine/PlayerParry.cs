@@ -5,14 +5,18 @@ using UnityEngine;
 public class PlayerParry : AbstractPlayerState
 {
     private float parry_duration = 2 / 3f;
-    private float parry_timer = 0f;
+    private float parry_downtime = 2 / 3f;
 
 
 
     public override void enter(PlayerController player)
     {
-        parry_timer = 0;
-        player.StartCoroutine(player.parryHelperCoroutine(parry_duration));
+        if (!player.parry_ready)
+        {
+            player.transitionState(player.idle_state);
+            return;
+        }
+        player.StartCoroutine(player.parryHelperCoroutine(parry_duration, parry_downtime));
     }
 
     public override void fixed_update(PlayerController player)
@@ -24,21 +28,7 @@ public class PlayerParry : AbstractPlayerState
         else
         {
             Vector2 movement_vector = player.vector_map[player.facing_direction];
-            player.rb.velocity = movement_vector.normalized * player.speed * 1 / 3f;
+            player.rb.velocity = movement_vector.normalized * player.speed * 1 / 6f;
         }
     }
-    
-
-    public override void update(PlayerController player)
-    {
-        parry_timer += Time.deltaTime;
-        if (parry_timer >= parry_duration)
-        {
-            player.transitionState(player.idle_state);
-        }
-
-        player.animator.Play("walk " + player.facing_direction.ToString().ToLower());
-    }
-
-    
 }

@@ -279,6 +279,7 @@ MonoBehaviour:
   facing_direction: 0
   allow_rotation: 1
   parry_active: 0
+  parry_ready: 1
   hurt_sound: {fileID: 0}
   afterimage_prefab: {fileID: 6429048131183450320, guid: aeba2b6c461fd47b0b9f591e70a132f9, type: 3}
   attack_shockwave_prefab: {fileID: 5734487070087648988, guid: 66a66c4791ecc4154afd92afc7d18c6a, type: 3}

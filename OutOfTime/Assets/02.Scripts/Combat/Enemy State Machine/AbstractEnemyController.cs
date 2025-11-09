@@ -1,19 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public abstract class AbstractEnemyController<T> : MonoBehaviour
+    where T : AbstractEnemyController<T>
 {
-    [SerializeField] private EnemyMovement movement;
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
-    [SerializeField] private float range;
-    [SerializeField] private HealthManager healthManager;
-    [SerializeField] private FlashEffect damageFlash;
-
-    [SerializeField] private GameObject attackPrefab;
-    [SerializeField] private float attackCooldown;
-    [SerializeField] private bool isProjectile;
+    [SerializeField] private HealthManager health_manager;
+    [SerializeField] private FlashEffect flash;
 
 
     [SerializeField] private GameObject dropOnDeath;
@@ -21,92 +18,67 @@ public class EnemyController : MonoBehaviour
 
 
     [SerializeField] private AudioClip hurtSound;
+    private AbstractEnemyState<T> state;
+    private bool dead = false;
 
-    private bool dead;
-
-
-    private float time;         // used for managing attack cooldown
 
     private void Awake()
     {
-        Debug.Log("awake: subscribing to hm events");
-        healthManager.onDamage += onDamage;
-        healthManager.onDeath += onDeath;
-        dead = false;
+        health_manager.onDamage += onDamage;
+        health_manager.onDeath += onDeath;
     }
 
     private void OnDisable()
     {
-        healthManager.onDamage -= onDamage;
-        healthManager.onDeath -= onDeath;
+        health_manager.onDamage -= onDamage;
+        health_manager.onDeath -= onDeath;
     }
 
+
+    public void transitionState(AbstractEnemyState<T> new_state)
+    {
+        if (dead) return;
+        if (state != null) state.exit((T)this);
+        state = new_state;
+        state.enter((T)this); // safe cast due to CRTP
+    }
     private void Update()
     {
-        if (time > 0)
-            time -= Time.deltaTime;
+        if (dead) return;
+        state.update((T)this);
     }
 
     void FixedUpdate()
     {
         if (dead) return;
-
-        Vector2 toPlayer = PlayerController.instance.transform.position - transform.position;
-        if (toPlayer.magnitude < range)
-        {
-            if (time <= 0)
-            {
-                Vector2 offset = Vector2.zero;
-                if (!isProjectile)
-                    offset = toPlayer.normalized * 0.7f;
-                animator.Play("attack");
-                Invoke("spawnAttack", 2 / 3f);
-
-                time = attackCooldown;
-
-            }
-            movement.move(toPlayer, true);
-        }
-        else
-            movement.move(toPlayer, false);
+        state.fixedUpdate((T)this);
     }
     
-    private void spawnAttack()
-    {
-        Vector2 toPlayer = PlayerController.instance.transform.position - transform.position;
-        GameObject attackObject = Instantiate(attackPrefab, (Vector2)transform.position + toPlayer.normalized * 0.7f, Quaternion.identity);
-        attackObject.transform.up = toPlayer.normalized;
-    }
-
-
-
-
-
-
-
+    
 
     private void onDamage()
     {
-        damageFlash.flash(1 / 3f);
+        if (dead) return;
+        flash.flash(1 / 6f);
         SoundManager.instance.playClip(hurtSound);
     }
 
     private void onDeath()
     {
-        if (dead) return;
-        dead = true;
         StartCoroutine(deathCoroutine());
     }
 
     private IEnumerator deathCoroutine()
     {
-        damageFlash.flash(1f);
+        dead = true;
+        flash.flash(1 / 3f);
 
-        yield return new WaitForSeconds(2/3f);
+        yield return new WaitForSeconds(1 / 3f);
+        animator.Play("death");
+        
 
-        //GameManager.instance.addScore(score);
-
-        float roll = Random.Range(0f, 1f);
+        yield return new WaitForSeconds(2 / 3f);
+        float roll = UnityEngine.Random.Range(0f, 1f);
         if (roll < dropChance && dropOnDeath != null)
         {
             Instantiate(dropOnDeath, transform.position, Quaternion.identity);

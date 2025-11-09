@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 8227902441970678330}
   - component: {fileID: 4518369158880265531}
   - component: {fileID: 1992807804647827930}
-  - component: {fileID: 50602731769813169}
   - component: {fileID: 8879719063785140532}
   - component: {fileID: 292717543011662092}
   - component: {fileID: 4345340431106251559}
   - component: {fileID: 3641293058073541094}
+  - component: {fileID: 8238845031606407734}
   m_Layer: 11
   m_Name: Slime
   m_TagString: Enemy
@@ -147,29 +147,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.3
---- !u!114 &50602731769813169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8761779352234823091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55a7417654e9d4163b7e034745879e44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movement: {fileID: 8879719063785140532}
-  animator: {fileID: 4518369158880265531}
-  range: 4
-  healthManager: {fileID: 4345340431106251559}
-  damageFlash: {fileID: 292717543011662092}
-  attackPrefab: {fileID: 8567023641611241318, guid: 9b9b7a60ffec8440aa593196e92ba2f2, type: 3}
-  attackCooldown: 5
-  isProjectile: 1
-  dropOnDeath: {fileID: 0}
-  dropChance: 0
-  hurtSound: {fileID: 0}
 --- !u!114 &8879719063785140532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f407e99cf659140758feada522119979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 1
   rb: {fileID: 3641293058073541094}
 --- !u!114 &292717543011662092
 MonoBehaviour:
@@ -237,3 +214,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &8238845031606407734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8761779352234823091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a264526ff469404ea1609c5a5cae725, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 4518369158880265531}
+  health_manager: {fileID: 4345340431106251559}
+  flash: {fileID: 292717543011662092}
+  dropOnDeath: {fileID: 0}
+  dropChance: 0
+  hurtSound: {fileID: 0}
+  movement: {fileID: 8879719063785140532}
+  projectile_prefab: {fileID: 8567023641611241318, guid: 9b9b7a60ffec8440aa593196e92ba2f2, type: 3}
+  range: 5

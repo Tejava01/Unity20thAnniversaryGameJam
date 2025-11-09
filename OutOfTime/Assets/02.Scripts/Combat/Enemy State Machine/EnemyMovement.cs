@@ -14,6 +14,7 @@ public class EnemyMovement : MonoBehaviour
 
     public void move(Vector2 direction, bool stationary)
     {
+        //Debug.Log("movement locked? " + movementLocked + ", stationary? " + stationary);
         if (movementLocked) return;
         if (stationary)
         {

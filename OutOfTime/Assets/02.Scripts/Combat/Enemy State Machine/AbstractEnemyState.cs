@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbstractEnemyState : MonoBehaviour
+public abstract class AbstractEnemyState<T> where T : AbstractEnemyController<T>
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract void enter(T controller);
+    public virtual void exit(T controller) { }
+    public virtual void update(T controller) { }
+    public virtual void fixedUpdate(T controller) { }
 }

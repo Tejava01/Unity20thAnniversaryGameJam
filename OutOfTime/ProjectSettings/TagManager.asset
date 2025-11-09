@@ -46,11 +46,11 @@ TagManager:
   - name: Background
     uniqueID: 1459109695
     locked: 0
-  - name: Foreground
-    uniqueID: 2155508509
-    locked: 0
   - name: Ground Effects
     uniqueID: 2960988173
+    locked: 0
+  - name: Foreground
+    uniqueID: 2155508509
     locked: 0
   - name: Enemy
     uniqueID: 1753167071

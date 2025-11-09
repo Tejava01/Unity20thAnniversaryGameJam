@@ -20,7 +20,7 @@ public class PlayerAttack : AbstractPlayerState
         else
         {
             Vector2 movement_vector = player.vector_map[player.facing_direction];
-            player.rb.velocity = movement_vector.normalized * player.speed * 1 / 6f;
+            player.rb.velocity = movement_vector.normalized * player.speed * 1 / 12f;
         }
     }
 

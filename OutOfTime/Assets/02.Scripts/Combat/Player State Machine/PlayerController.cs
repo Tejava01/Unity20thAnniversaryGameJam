@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public DIRECTION facing_direction;
     public bool allow_rotation = true;
     public bool parry_active = false;
+    public bool parry_ready = true;
 
 
     private const float teleport_cooldown = 5f;
@@ -203,51 +204,60 @@ public class PlayerController : MonoBehaviour
         float teleport_distance = 3.0f;
         Vector2 new_position = rb.position + movement_vector.normalized * teleport_distance;
         rb.MovePosition(new_position);
+        next_attack = ATTACK_TYPE.CHARGED;
     }
 
     public void attack()
     {
         switch (next_attack)
         {
+            // TODO change animations to powerful attack and charged attack once those are added
             case ATTACK_TYPE.BASIC:
                 StartCoroutine(attackHelperCoroutine("attack " + facing_direction.ToString().ToLower(), attack_shockwave_prefab));
                 break;
             case ATTACK_TYPE.POWERFUL:
-                StartCoroutine(attackHelperCoroutine("powerful attack " + facing_direction.ToString().ToLower(), powerful_shockwave_prefab));
+                StartCoroutine(attackHelperCoroutine("attack " + facing_direction.ToString().ToLower(), powerful_shockwave_prefab));
                 break;
             case ATTACK_TYPE.CHARGED:
-                StartCoroutine(attackHelperCoroutine("charged attack " + facing_direction.ToString().ToLower(), charged_shockwave_prefab));
+                StartCoroutine(attackHelperCoroutine("attack " + facing_direction.ToString().ToLower(), charged_shockwave_prefab));
                 break;
         }
         next_attack = ATTACK_TYPE.BASIC;    // consume stored attack
     }
 
 
-    public IEnumerator parryHelperCoroutine(float parry_duration)
+    public IEnumerator parryHelperCoroutine(float duration, float downtime)
     {
+        parry_ready = false;
         parry_active = true;
-        yield return new WaitForSeconds(parry_duration);
+
+        yield return new WaitForSeconds(duration);
         parry_active = false;
+        transitionState(idle_state);
+
+        yield return new WaitForSeconds(downtime);
+        parry_ready = true;
     }
 
     public Vector2 onParrySuccess()
     {
         next_attack = ATTACK_TYPE.POWERFUL;
         parry_active = false;
+        transitionState(idle_state);
         return vector_map[facing_direction].normalized;
     }
 
     private IEnumerator attackHelperCoroutine(string animation_name, GameObject shockwave_prefab)
     {
         animator.Play(animation_name);
-        yield return new WaitForSeconds(2 / 6f);  // wait for animation to reach the attack frame
+        yield return new WaitForSeconds(2 / 12f);  // wait for animation to reach the attack frame
 
 
         Vector3 offset = vector_map[facing_direction].normalized * 2 / 3f;
         GameObject shockwave = Instantiate(shockwave_prefab, transform.position + offset, transform.rotation);
         shockwave.transform.up = offset.normalized;
 
-        yield return new WaitForSeconds(2 / 6f); // wait for the rest of the attack animation
+        yield return new WaitForSeconds(3 / 12f); // wait for the rest of the attack animation
         transitionState(idle_state);
 
 
